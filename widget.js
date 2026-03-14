@@ -15,42 +15,54 @@ let selectedTypeBail = new Set();
 let selectedActif = new Set();
 let selectedBati = new Set();
 
-// Variables pour la recherche par site
-let siteSearch = document.getElementById('site-search');
-let btnSearch = document.getElementById('btn-search');
-let btnClear = document.getElementById('btn-clear');
-let siteMainContent = document.getElementById('site-main-content');
-let suggestionsContainer = document.getElementById('suggestions-container');
-let suggestionsList = document.getElementById('suggestions-list');
-
 // Éléments DOM
-const filterTypeBatiment = document.getElementById('filter-type-batiment');
-const filterGestionnaire = document.getElementById('filter-gestionnaire');
-const filterTypeLotContainer = document.getElementById('filter-type-lot');
-const filterPerimetreContainer = document.getElementById('filter-perimetre');
-const filterZone = document.getElementById('filter-zone');
-const filterStatutLocatifContainer = document.getElementById('filter-statut-locatif');
-const filterTypeBailContainer = document.getElementById('filter-type-bail');
-const filterActifContainer = document.getElementById('filter-actif');
-const filterBatiContainer = document.getElementById('filter-bati');
-const toggleAllTypeLot = document.getElementById('toggle-all-type-lot');
-const toggleAllPerimetre = document.getElementById('toggle-all-perimetre');
-const toggleAllStatutLocatif = document.getElementById('toggle-all-statut-locatif');
-const toggleAllTypeBail = document.getElementById('toggle-all-type-bail');
-const toggleAllActif = document.getElementById('toggle-all-actif');
-const toggleAllBati = document.getElementById('toggle-all-bati');
-const btnFilter = document.getElementById('btn-filter');
-const btnReset = document.getElementById('btn-reset');
-const btnExport = document.getElementById('btn-export');
-const btnExportDetail = document.getElementById('btn-export-detail');
-const tableContainer = document.getElementById('table-container');
-const resultsCount = document.getElementById('results-count');
-const countSites = document.getElementById('count-sites');
-const countBatiments = document.getElementById('count-batiments');
-const countLots = document.getElementById('count-lots');
-const countParcelles = document.getElementById('count-parcelles');
+let filterTypeBatiment, filterGestionnaire, filterTypeLotContainer, filterPerimetreContainer;
+let filterZone, filterStatutLocatifContainer, filterTypeBailContainer, filterActifContainer, filterBatiContainer;
+let toggleAllTypeLot, toggleAllPerimetre, toggleAllStatutLocatif, toggleAllTypeBail, toggleAllActif, toggleAllBati;
+let btnFilter, btnReset, btnExport, btnExportDetail, tableContainer, resultsCount;
+let countSites, countBatiments, countLots, countParcelles;
+let siteSearch, btnSearch, btnClear, siteMainContent, suggestionsContainer, suggestionsList;
 
-// Initialisation Grist
+// Initialiser le widget quand le DOM est chargé
+document.addEventListener('DOMContentLoaded', function() {
+  // Récupérer les éléments DOM
+  filterTypeBatiment = document.getElementById('filter-type-batiment');
+  filterGestionnaire = document.getElementById('filter-gestionnaire');
+  filterTypeLotContainer = document.getElementById('filter-type-lot');
+  filterPerimetreContainer = document.getElementById('filter-perimetre');
+  filterZone = document.getElementById('filter-zone');
+  filterStatutLocatifContainer = document.getElementById('filter-statut-locatif');
+  filterTypeBailContainer = document.getElementById('filter-type-bail');
+  filterActifContainer = document.getElementById('filter-actif');
+  filterBatiContainer = document.getElementById('filter-bati');
+  toggleAllTypeLot = document.getElementById('toggle-all-type-lot');
+  toggleAllPerimetre = document.getElementById('toggle-all-perimetre');
+  toggleAllStatutLocatif = document.getElementById('toggle-all-statut-locatif');
+  toggleAllTypeBail = document.getElementById('toggle-all-type-bail');
+  toggleAllActif = document.getElementById('toggle-all-actif');
+  toggleAllBati = document.getElementById('toggle-all-bati');
+  btnFilter = document.getElementById('btn-filter');
+  btnReset = document.getElementById('btn-reset');
+  btnExport = document.getElementById('btn-export');
+  btnExportDetail = document.getElementById('btn-export-detail');
+  tableContainer = document.getElementById('table-container');
+  resultsCount = document.getElementById('results-count');
+  countSites = document.getElementById('count-sites');
+  countBatiments = document.getElementById('count-batiments');
+  countLots = document.getElementById('count-lots');
+  countParcelles = document.getElementById('count-parcelles');
+  siteSearch = document.getElementById('site-search');
+  btnSearch = document.getElementById('btn-search');
+  btnClear = document.getElementById('btn-clear');
+  siteMainContent = document.getElementById('site-main-content');
+  suggestionsContainer = document.getElementById('suggestions-container');
+  suggestionsList = document.getElementById('suggestions-list');
+  
+  setupEventListeners();
+});
+
+function setupEventListeners() {
+  // Initialisation Grist
 grist.ready({
   requiredAccess: 'read table',
   columns: [
@@ -893,3 +905,5 @@ document.addEventListener('click', function(e) {
     suggestionsContainer.style.display = 'none';
   }
 });
+
+} // Fin de setupEventListeners
