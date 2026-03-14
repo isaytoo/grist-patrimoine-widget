@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Patrimoine Immobilier</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 Consultation Patrimoine Immobilier</h1>
+        </div>
+        
+        <!-- Filtres -->
+        <div class="filters-section">
+            <div class="filters-title">Filtres de recherche</div>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Type bâtiment</label>
+                    <select id="filter-type-batiment">
+                        <option value="">Tous les types</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Gestionnaire</label>
+                    <select id="filter-gestionnaire">
+                        <option value="">Tous les gestionnaires</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="toggle-header">
+                        <label>Type lot</label>
+                        <span class="toggle-select-all" id="toggle-all-type-lot">Tout sélectionner</span>
+                    </div>
+                    <div class="toggle-group" id="filter-type-lot"></div>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="toggle-header">
+                        <label>Périmètre</label>
+                        <span class="toggle-select-all" id="toggle-all-perimetre">Tout sélectionner</span>
+                    </div>
+                    <div class="toggle-group" id="filter-perimetre"></div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Zone opérationnelle</label>
+                    <select id="filter-zone">
+                        <option value="">Toutes les zones</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="toggle-header">
+                        <label>Statut locatif</label>
+                        <span class="toggle-select-all" id="toggle-all-statut-locatif">Tout sélectionner</span>
+                    </div>
+                    <div class="toggle-group" id="filter-statut-locatif"></div>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="toggle-header">
+                        <label>Type bail</label>
+                        <span class="toggle-select-all" id="toggle-all-type-bail">Tout sélectionner</span>
+                    </div>
+                    <div class="toggle-group" id="filter-type-bail"></div>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="toggle-header">
+                        <label>Actif</label>
+                        <span class="toggle-select-all" id="toggle-all-actif">Tout sélectionner</span>
+                    </div>
+                    <div class="toggle-group" id="filter-actif"></div>
+                </div>
+                
+                <div class="filter-group">
+                    <div class="toggle-header">
+                        <label>Bâti</label>
+                        <span class="toggle-select-all" id="toggle-all-bati">Tout sélectionner</span>
+                    </div>
+                    <div class="toggle-group" id="filter-bati"></div>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button class="btn btn-primary" id="btn-filter">🔍 Filtrer</button>
+                <button class="btn btn-secondary" id="btn-reset">↺ Réinitialiser</button>
+            </div>
+        </div>
+        
+        <!-- Indicateurs -->
+        <div class="indicators-section">
+            <div class="indicator-card sites">
+                <div class="indicator-icon">🏢</div>
+                <div class="indicator-value" id="count-sites">-</div>
+                <div class="indicator-label">Sites</div>
+            </div>
+            <div class="indicator-card batiments">
+                <div class="indicator-icon">🏗️</div>
+                <div class="indicator-value" id="count-batiments">-</div>
+                <div class="indicator-label">Bâtiments</div>
+            </div>
+            <div class="indicator-card lots">
+                <div class="indicator-icon">📦</div>
+                <div class="indicator-value" id="count-lots">-</div>
+                <div class="indicator-label">Lots</div>
+            </div>
+            <div class="indicator-card parcelles">
+                <div class="indicator-icon">🗺️</div>
+                <div class="indicator-value" id="count-parcelles">-</div>
+                <div class="indicator-label">Parcelles</div>
+            </div>
+        </div>
+        
+        <!-- Résultats -->
+        <div class="results-section">
+            <div class="results-header">
+                <h2>📋 Résultats</h2>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span class="results-count" id="results-count">Chargement...</span>
+                    <div class="export-buttons">
+                        <button class="btn btn-export" id="btn-export">📥 Export synthèse</button>
+                        <button class="btn btn-export-detail" id="btn-export-detail">📊 Export détail</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container" id="table-container">
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    Chargement des données...
+                </div>
+            </div>
+            
+            <!-- Légende -->
+            <div class="legend">
+                <div class="legend-title">💡 Légende</div>
+                <ul>
+                    <li><strong>Bât.</strong> Bâtiments uniques</li>
+                    <li><strong>Lots</strong> Lots uniques</li>
+                    <li><strong>Parc.</strong> Parcelles cadastrales</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://docs.getgrist.com/grist-plugin-api.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="widget.js"></script>
+</body>
+</html>

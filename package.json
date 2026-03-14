@@ -1,0 +1,18 @@
+{
+  "name": "grist-patrimoine-widget",
+  "version": "1.0.0",
+  "description": "Widget Grist pour la consultation et l'analyse du patrimoine immobilier",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000"
+  },
+  "keywords": ["grist", "widget", "patrimoine", "immobilier", "real-estate"],
+  "author": "Said Hamadou (isaytoo)",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/isaytoo/grist-patrimoine-widget",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/isaytoo/grist-patrimoine-widget.git"
+  }
+}
