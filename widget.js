@@ -15,6 +15,14 @@ let selectedTypeBail = new Set();
 let selectedActif = new Set();
 let selectedBati = new Set();
 
+// Variables pour la recherche par site
+let siteSearch = document.getElementById('site-search');
+let btnSearch = document.getElementById('btn-search');
+let btnClear = document.getElementById('btn-clear');
+let siteMainContent = document.getElementById('site-main-content');
+let suggestionsContainer = document.getElementById('suggestions-container');
+let suggestionsList = document.getElementById('suggestions-list');
+
 // Éléments DOM
 const filterTypeBatiment = document.getElementById('filter-type-batiment');
 const filterGestionnaire = document.getElementById('filter-gestionnaire');
@@ -504,3 +512,384 @@ toggleAllStatutLocatif.addEventListener('click', () => toggleSelectAll(filterSta
 toggleAllTypeBail.addEventListener('click', () => toggleSelectAll(filterTypeBailContainer, selectedTypeBail));
 toggleAllActif.addEventListener('click', () => toggleSelectAll(filterActifContainer, selectedActif));
 toggleAllBati.addEventListener('click', () => toggleSelectAll(filterBatiContainer, selectedBati));
+
+// =============================================================================
+// SYSTÈME D'ONGLETS
+// =============================================================================
+
+// Gestion des onglets
+function switchTab(tabId) {
+  // Masquer tous les contenus
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.classList.remove('active');
+  });
+  
+  // Désactiver tous les boutons
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  
+  // Afficher le contenu sélectionné
+  document.getElementById(`tab-${tabId}`).classList.add('active');
+  
+  // Activer le bouton sélectionné
+  document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+}
+
+// Event listeners pour les onglets
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    switchTab(btn.getAttribute('data-tab'));
+  });
+});
+
+// =============================================================================
+// RECHERCHE PAR SITE
+// =============================================================================
+
+// Afficher des suggestions
+function showSuggestions(searchTerm) {
+  if (!searchTerm || searchTerm.length < 1) {
+    suggestionsContainer.style.display = 'none';
+    return;
+  }
+  
+  const uniqueSites = new Map();
+  allData.forEach(row => {
+    if (row.Site && !uniqueSites.has(row.Site)) {
+      uniqueSites.set(row.Site, {
+        site: row.Site,
+        libelle: row.Libelle_site || ''
+      });
+    }
+  });
+  
+  const matches = Array.from(uniqueSites.values())
+    .filter(site => 
+      String(site.site).toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(site.libelle).toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(0, 5);
+  
+  if (matches.length > 0) {
+    suggestionsList.innerHTML = '';
+    matches.forEach(site => {
+      const chip = document.createElement('div');
+      chip.className = 'suggestion-chip';
+      chip.textContent = `${site.site} - ${site.libelle}`;
+      chip.onclick = () => {
+        siteSearch.value = site.site;
+        suggestionsContainer.style.display = 'none';
+        displaySiteFiche();
+      };
+      suggestionsList.appendChild(chip);
+    });
+    suggestionsContainer.style.display = 'block';
+  } else {
+    suggestionsContainer.style.display = 'none';
+  }
+}
+
+// Afficher la fiche du site
+function displaySiteFiche() {
+  const searchValue = siteSearch.value.trim();
+  
+  if (!searchValue) {
+    siteMainContent.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🏢</div>
+        <div class="empty-state-title">Recherchez un site</div>
+        <div class="empty-state-text">Saisissez un numéro de site dans la barre de recherche ci-dessus</div>
+      </div>
+    `;
+    return;
+  }
+  
+  siteMainContent.innerHTML = `
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      Recherche en cours...
+    </div>
+  `;
+  
+  const siteData = allData.filter(row => 
+    String(row.Site).toLowerCase() === searchValue.toLowerCase()
+  );
+  
+  if (siteData.length === 0) {
+    siteMainContent.innerHTML = `
+      <div class="error-state">
+        <div class="error-icon">⚠️</div>
+        <div class="error-content">
+          <div class="error-title">Site non trouvé</div>
+          <div class="error-text">Aucun site ne correspond au numéro "${escapeHtml(searchValue)}". Vérifiez votre saisie.</div>
+        </div>
+      </div>
+      <div class="empty-state">
+        <div class="empty-state-icon">🔍</div>
+        <div class="empty-state-title">Essayez une autre recherche</div>
+        <div class="empty-state-text">Vérifiez l'orthographe ou essayez un autre numéro de site</div>
+      </div>
+    `;
+    return;
+  }
+  
+  const siteInfo = siteData[0];
+  
+  const uniqueBatiments = new Set();
+  const uniqueLots = new Set();
+  const uniqueParcelles = new Set();
+  const uniqueGestionnaires = new Set();
+  
+  siteData.forEach(row => {
+    if (row.SiteBatiment) uniqueBatiments.add(row.SiteBatiment);
+    if (row.SiteBatLot) uniqueLots.add(row.SiteBatLot);
+    if (row.N_parcelle) uniqueParcelles.add(row.N_parcelle);
+    if (row.Gestionnaire) uniqueGestionnaires.add(row.Gestionnaire);
+  });
+  
+  const batimentsMap = new Map();
+  
+  siteData.forEach(row => {
+    const batKey = row.SiteBatiment || 'N/A';
+    
+    if (!batimentsMap.has(batKey)) {
+      batimentsMap.set(batKey, {
+        numero: row.Bat || '',
+        libelle: row.Libelle_batiment || 'Bâtiment sans nom',
+        type: row.Type_batiment || '',
+        lots: []
+      });
+    }
+    
+    if (row.N_Lot) {
+      batimentsMap.get(batKey).lots.push({
+        numero: row.N_Lot,
+        libelle: row.Libelle_lot || '',
+        type: row.Type_lot || '',
+        statut: row.Statut_locatif || '',
+        bail: row.NOM_TYPE_BAIL || '',
+        gestionnaire: row.Gestionnaire || '',
+        perimetre: row.Perimetre || '',
+        zone: row.Zone_operationnelle || '',
+        parcelle: row.N_parcelle || ''
+      });
+    }
+  });
+  
+  let html = `
+    <div class="site-card">
+      <div class="site-header">
+        <div class="site-title-section">
+          <div class="site-number">Site n° ${escapeHtml(siteInfo.Site)}</div>
+          <h2 class="site-title">${escapeHtml(siteInfo.Libelle_site || 'Site sans nom')}</h2>
+          <div class="site-address">
+            📍 ${escapeHtml(siteInfo.Adresse_site || 'Adresse non renseignée')}${siteInfo.Commune_site ? '<br>🏙️ ' + escapeHtml(siteInfo.Commune_site) : ''}
+          </div>
+        </div>
+        <div class="site-actions">
+          <button class="btn btn-export" onclick="exportSiteFiche()">📥 Exporter Excel</button>
+        </div>
+      </div>
+      
+      <div class="site-stats">
+        <div class="stat-card batiments">
+          <div class="stat-value">${uniqueBatiments.size}</div>
+          <div class="stat-label">Bâtiment${uniqueBatiments.size > 1 ? 's' : ''}</div>
+        </div>
+        <div class="stat-card lots">
+          <div class="stat-value">${uniqueLots.size}</div>
+          <div class="stat-label">Lot${uniqueLots.size > 1 ? 's' : ''}</div>
+        </div>
+        <div class="stat-card parcelles">
+          <div class="stat-value">${uniqueParcelles.size}</div>
+          <div class="stat-label">Parcelle${uniqueParcelles.size > 1 ? 's' : ''}</div>
+        </div>
+        <div class="stat-card gestionnaires">
+          <div class="stat-value">${uniqueGestionnaires.size}</div>
+          <div class="stat-label">Gestionnaire${uniqueGestionnaires.size > 1 ? 's' : ''}</div>
+        </div>
+      </div>
+      
+      <div class="buildings-section">
+        <h3 class="section-title">🏗️ Bâtiments et lots</h3>
+  `;
+  
+  batimentsMap.forEach((batiment, key) => {
+    html += `
+      <div class="building-card">
+        <div class="building-header">
+          <div class="building-info">
+            ${batiment.numero ? `<div class="building-number">Bâtiment ${escapeHtml(batiment.numero)}</div>` : ''}
+            <div class="building-name">${escapeHtml(batiment.libelle)}</div>
+            ${batiment.type ? `<div class="building-type">Type: ${escapeHtml(batiment.type)}</div>` : ''}
+          </div>
+          <div class="building-count">
+            <strong>${batiment.lots.length}</strong> lot${batiment.lots.length > 1 ? 's' : ''}
+          </div>
+        </div>
+    `;
+    
+    if (batiment.lots.length > 0) {
+      html += '<div class="lots-grid">';
+      
+      batiment.lots.forEach(lot => {
+        const showParcelle = lot.parcelle && lot.parcelle !== lot.numero;
+        
+        html += `
+          <div class="lot-card">
+            <div class="lot-header">
+              <div class="lot-number">Lot ${escapeHtml(lot.numero)}</div>
+            </div>
+            <div class="lot-title">${escapeHtml(lot.libelle || 'Lot sans nom')}</div>
+            <div class="lot-details">
+              ${lot.type ? `
+                <div class="lot-detail-row">
+                  <span class="lot-detail-label">Type</span>
+                  <span class="lot-detail-value"><span class="lot-badge badge-type">${escapeHtml(lot.type)}</span></span>
+                </div>
+              ` : ''}
+              ${lot.statut ? `
+                <div class="lot-detail-row">
+                  <span class="lot-detail-label">Statut</span>
+                  <span class="lot-detail-value"><span class="lot-badge badge-statut">${escapeHtml(lot.statut)}</span></span>
+                </div>
+              ` : ''}
+              ${lot.bail ? `
+                <div class="lot-detail-row">
+                  <span class="lot-detail-label">Bail</span>
+                  <span class="lot-detail-value"><span class="lot-badge badge-bail">${escapeHtml(lot.bail)}</span></span>
+                </div>
+              ` : ''}
+              ${showParcelle ? `
+                <div class="lot-detail-row">
+                  <span class="lot-detail-label">Parcelle</span>
+                  <span class="lot-detail-value"><span class="lot-badge badge-parcelle">${escapeHtml(lot.parcelle)}</span></span>
+                </div>
+              ` : ''}
+              ${lot.gestionnaire ? `
+                <div class="lot-detail-row">
+                  <span class="lot-detail-label">Gestionnaire</span>
+                  <span class="lot-detail-value">${escapeHtml(lot.gestionnaire)}</span>
+                </div>
+              ` : ''}
+              ${lot.perimetre ? `
+                <div class="lot-detail-row">
+                  <span class="lot-detail-label">Périmètre</span>
+                  <span class="lot-detail-value">${escapeHtml(lot.perimetre)}</span>
+                </div>
+              ` : ''}
+              ${lot.zone ? `
+                <div class="lot-detail-row">
+                  <span class="lot-detail-label">Zone</span>
+                  <span class="lot-detail-value">${escapeHtml(lot.zone)}</span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+    } else {
+      html += '<div class="no-lots">Aucun lot enregistré pour ce bâtiment</div>';
+    }
+    
+    html += '</div>';
+  });
+  
+  html += `
+      </div>
+    </div>
+  `;
+  
+  siteMainContent.innerHTML = html;
+  suggestionsContainer.style.display = 'none';
+}
+
+// Effacer la recherche
+function clearSearch() {
+  siteSearch.value = '';
+  suggestionsContainer.style.display = 'none';
+  siteMainContent.innerHTML = `
+    <div class="empty-state">
+      <div class="empty-state-icon">🏢</div>
+      <div class="empty-state-title">Recherchez un site</div>
+      <div class="empty-state-text">Saisissez un numéro de site dans la barre de recherche ci-dessus</div>
+    </div>
+  `;
+  siteSearch.focus();
+}
+
+// Exporter la fiche en Excel
+function exportSiteFiche() {
+  const searchValue = siteSearch.value.trim();
+  
+  if (!searchValue) {
+    alert('Veuillez d\'abord rechercher un site');
+    return;
+  }
+  
+  const siteData = allData.filter(row => 
+    String(row.Site).toLowerCase() === searchValue.toLowerCase()
+  );
+  
+  if (siteData.length === 0) {
+    alert('Aucune donnée à exporter');
+    return;
+  }
+  
+  const exportData = siteData.map(row => ({
+    'N° Site': row.Site || '',
+    'Libellé site': row.Libelle_site || '',
+    'Commune': row.Commune_site || '',
+    'Adresse site': row.Adresse_site || '',
+    'N° Bâtiment': row.Bat || '',
+    'Libellé bâtiment': row.Libelle_batiment || '',
+    'Type bâtiment': row.Type_batiment || '',
+    'N° Lot': row.N_Lot || '',
+    'Libellé lot': row.Libelle_lot || '',
+    'Type lot': row.Type_lot || '',
+    'Statut locatif': row.Statut_locatif || '',
+    'Type bail': row.NOM_TYPE_BAIL || '',
+    'Gestionnaire': row.Gestionnaire || '',
+    'Périmètre': row.Perimetre || '',
+    'Zone opérationnelle': row.Zone_operationnelle || '',
+    'N° Parcelle': row.N_parcelle || ''
+  }));
+  
+  const ws = XLSX.utils.json_to_sheet(exportData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, `Site ${searchValue}`);
+  
+  const colWidths = [
+    { wch: 12 }, { wch: 30 }, { wch: 20 }, { wch: 40 },
+    { wch: 12 }, { wch: 30 }, { wch: 20 }, { wch: 12 },
+    { wch: 30 }, { wch: 20 }, { wch: 18 }, { wch: 18 },
+    { wch: 25 }, { wch: 20 }, { wch: 25 }, { wch: 15 }
+  ];
+  ws['!cols'] = colWidths;
+  
+  const date = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(wb, `Fiche_Site_${searchValue}_${date}.xlsx`);
+}
+
+// Event listeners pour la recherche par site
+btnSearch.addEventListener('click', displaySiteFiche);
+btnClear.addEventListener('click', clearSearch);
+
+siteSearch.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    displaySiteFiche();
+  }
+});
+
+siteSearch.addEventListener('input', function() {
+  showSuggestions(this.value);
+});
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-bar')) {
+    suggestionsContainer.style.display = 'none';
+  }
+});

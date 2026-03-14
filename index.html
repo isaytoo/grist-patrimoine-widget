@@ -13,7 +13,17 @@
             <h1>📊 Consultation Patrimoine Immobilier</h1>
         </div>
         
-        <!-- Filtres -->
+        <!-- Onglets -->
+        <div class="tabs-section">
+            <div class="tab-buttons">
+                <button class="tab-btn active" data-tab="global">📊 Consultation globale</button>
+                <button class="tab-btn" data-tab="site">📋 Recherche par site</button>
+            </div>
+        </div>
+        
+        <!-- Onglet Consultation globale -->
+        <div class="tab-content active" id="tab-global">
+            <!-- Filtres -->
         <div class="filters-section">
             <div class="filters-title">Filtres de recherche</div>
             <div class="filters-grid">
@@ -145,6 +155,43 @@
                     <li><strong>Lots</strong> Lots uniques</li>
                     <li><strong>Parc.</strong> Parcelles cadastrales</li>
                 </ul>
+            </div>
+        </div>
+        
+        <!-- Onglet Recherche par site -->
+        <div class="tab-content" id="tab-site">
+            <!-- Barre de recherche -->
+            <div class="search-bar">
+                <div class="search-label">Rechercher un site</div>
+                <div class="search-content">
+                    <div class="search-input-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input 
+                            type="text" 
+                            id="site-search" 
+                            class="search-input" 
+                            placeholder="Saisissez le numéro de site (ex: 001, 042, 123...)"
+                            autocomplete="off"
+                        />
+                    </div>
+                    <button class="btn btn-primary" id="btn-search">Rechercher</button>
+                    <button class="btn btn-secondary" id="btn-clear">Effacer</button>
+                </div>
+                
+                <!-- Suggestions -->
+                <div class="search-suggestions" id="suggestions-container" style="display: none;">
+                    <div class="suggestions-title">Suggestions :</div>
+                    <div class="suggestions-list" id="suggestions-list"></div>
+                </div>
+            </div>
+            
+            <!-- Contenu principal -->
+            <div id="site-main-content">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🏢</div>
+                    <div class="empty-state-title">Recherchez un site</div>
+                    <div class="empty-state-text">Saisissez un numéro de site dans la barre de recherche ci-dessus</div>
+                </div>
             </div>
         </div>
     </div>

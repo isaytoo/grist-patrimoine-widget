@@ -4,6 +4,7 @@ Widget Grist pour la consultation et l'analyse du patrimoine immobilier avec fil
 
 ## Fonctionnalités
 
+### 📊 Consultation globale
 - **Filtres multi-critères** : Type bâtiment, gestionnaire, type lot, périmètre, zone opérationnelle, statut locatif, type bail, actif, bâti
 - **Filtres multi-sélection** avec toggle buttons et "Tout sélectionner"
 - **Indicateurs en temps réel** : Sites, Bâtiments, Lots, Parcelles uniques
@@ -11,7 +12,18 @@ Widget Grist pour la consultation et l'analyse du patrimoine immobilier avec fil
 - **Exports Excel** :
   - Synthèse (agrégé par site)
   - Détail (ligne par ligne)
+
+### 📋 Recherche par site
+- **Recherche rapide** par numéro de site avec suggestions automatiques
+- **Fiche détaillée** du site avec : informations, indicateurs, bâtiments et lots
+- **Affichage structuré** des bâtiments et de leurs lots respectifs
+- **Export Excel** de la fiche site complète
 - **Interface responsive** et moderne
+
+### 🎯 Interface
+- **Système d'onglets** pour basculer entre Consultation globale et Recherche par site
+- **Design moderne** avec animations et interactions fluides
+- **Responsive** sur tous les appareils
 
 ## Installation
 
