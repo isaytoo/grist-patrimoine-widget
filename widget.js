@@ -527,6 +527,8 @@ toggleAllTypeBail.addEventListener('click', () => toggleSelectAll(filterTypeBail
 toggleAllActif.addEventListener('click', () => toggleSelectAll(filterActifContainer, selectedActif));
 toggleAllBati.addEventListener('click', () => toggleSelectAll(filterBatiContainer, selectedBati));
 
+} // Fin de setupEventListeners
+
 // =============================================================================
 // SYSTÈME D'ONGLETS
 // =============================================================================
@@ -903,8 +905,6 @@ function exportSiteFiche() {
   const date = new Date().toISOString().slice(0, 10);
   XLSX.writeFile(wb, `Fiche_Site_${searchValue}_${date}.xlsx`);
 }
-
-} // Fin de setupEventListeners
 
 // =============================================================================
 // EVENT LISTENERS POUR LES ONGLETS
