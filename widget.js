@@ -41,6 +41,8 @@ const toggleAllActif = document.getElementById('toggle-all-actif');
 const toggleAllBati = document.getElementById('toggle-all-bati');
 const btnFilter = document.getElementById('btn-filter');
 const btnReset = document.getElementById('btn-reset');
+const btnExport = document.getElementById('btn-export');
+const btnExportDetail = document.getElementById('btn-export-detail');
 const tableContainer = document.getElementById('table-container');
 const resultsCount = document.getElementById('results-count');
 const countSites = document.getElementById('count-sites');
@@ -493,8 +495,6 @@ function exportToExcelDetail() {
 }
 
 // Event listeners
-const btnExport = document.getElementById('btn-export');
-const btnExportDetail = document.getElementById('btn-export-detail');
 btnFilter.addEventListener('click', applyFilters);
 btnReset.addEventListener('click', resetFilters);
 btnExport.addEventListener('click', exportToExcel);
