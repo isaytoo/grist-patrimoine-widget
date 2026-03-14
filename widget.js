@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', function() {
   suggestionsList = document.getElementById('suggestions-list');
   
   setupEventListeners();
+  setupTabListeners();
+  setupSearchListeners();
 });
 
 function setupEventListeners() {
@@ -548,20 +550,20 @@ function switchTab(tabId) {
   document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
 }
 
-// Event listeners pour les onglets
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    switchTab(btn.getAttribute('data-tab'));
-  });
-});
-
 // =============================================================================
 // RECHERCHE PAR SITE
 // =============================================================================
 
 // Afficher des suggestions
 function showSuggestions(searchTerm) {
+  console.log('showSuggestions appelé, searchTerm:', searchTerm, 'allData.length:', allData.length);
+  
   if (!searchTerm || searchTerm.length < 1) {
+    suggestionsContainer.style.display = 'none';
+    return;
+  }
+  
+  if (allData.length === 0) {
     suggestionsContainer.style.display = 'none';
     return;
   }
@@ -606,12 +608,28 @@ function showSuggestions(searchTerm) {
 function displaySiteFiche() {
   const searchValue = siteSearch.value.trim();
   
+  console.log('displaySiteFiche appelé, searchValue:', searchValue);
+  console.log('allData disponible:', allData.length, 'enregistrements');
+  
   if (!searchValue) {
     siteMainContent.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">🏢</div>
         <div class="empty-state-title">Recherchez un site</div>
         <div class="empty-state-text">Saisissez un numéro de site dans la barre de recherche ci-dessus</div>
+      </div>
+    `;
+    return;
+  }
+  
+  if (allData.length === 0) {
+    siteMainContent.innerHTML = `
+      <div class="error-state">
+        <div class="error-icon">⚠️</div>
+        <div class="error-content">
+          <div class="error-title">Données non chargées</div>
+          <div class="error-text">Les données ne sont pas encore chargées. Veuillez patienter quelques instants.</div>
+        </div>
       </div>
     `;
     return;
@@ -886,24 +904,41 @@ function exportSiteFiche() {
   XLSX.writeFile(wb, `Fiche_Site_${searchValue}_${date}.xlsx`);
 }
 
-// Event listeners pour la recherche par site
-btnSearch.addEventListener('click', displaySiteFiche);
-btnClear.addEventListener('click', clearSearch);
-
-siteSearch.addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    displaySiteFiche();
-  }
-});
-
-siteSearch.addEventListener('input', function() {
-  showSuggestions(this.value);
-});
-
-document.addEventListener('click', function(e) {
-  if (!e.target.closest('.search-bar')) {
-    suggestionsContainer.style.display = 'none';
-  }
-});
-
 } // Fin de setupEventListeners
+
+// =============================================================================
+// EVENT LISTENERS POUR LES ONGLETS
+// =============================================================================
+
+function setupTabListeners() {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchTab(btn.getAttribute('data-tab'));
+    });
+  });
+}
+
+// =============================================================================
+// EVENT LISTENERS POUR LA RECHERCHE PAR SITE
+// =============================================================================
+
+function setupSearchListeners() {
+  btnSearch.addEventListener('click', displaySiteFiche);
+  btnClear.addEventListener('click', clearSearch);
+
+  siteSearch.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      displaySiteFiche();
+    }
+  });
+
+  siteSearch.addEventListener('input', function() {
+    showSuggestions(this.value);
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.search-bar')) {
+      suggestionsContainer.style.display = 'none';
+    }
+  });
+}
