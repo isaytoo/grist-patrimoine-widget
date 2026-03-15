@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setupEventListeners();
   setupTabListeners();
   setupSearchListeners();
+  setupAccordionListeners();
 });
 
 function setupEventListeners() {
@@ -562,6 +563,32 @@ function switchTab(tabId) {
   
   // Activer le bouton sélectionné
   document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+}
+
+// =============================================================================
+// GESTION DES ACCORDÉONS
+// =============================================================================
+
+function setupAccordionListeners() {
+  const accordionHeaders = document.querySelectorAll('.accordion-header');
+  
+  accordionHeaders.forEach(header => {
+    header.addEventListener('click', function() {
+      const accordionContent = this.nextElementSibling;
+      const isActive = this.classList.contains('active');
+      
+      // Toggle l'état actif
+      this.classList.toggle('active');
+      accordionContent.classList.toggle('active');
+      
+      // Animation fluide de la hauteur
+      if (!isActive) {
+        accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
+      } else {
+        accordionContent.style.maxHeight = '0';
+      }
+    });
+  });
 }
 
 // =============================================================================
