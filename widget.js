@@ -71,28 +71,7 @@ function setupEventListeners() {
 // Initialisation Grist
 grist.ready({
   requiredAccess: 'read table',
-  columns: [
-    { name: 'Site', type: 'Text' },
-    { name: 'Libelle_site', type: 'Text' },
-    { name: 'Adresse_site', type: 'Text' },
-    { name: 'Commune_site', type: 'Text' },
-    { name: 'Type_batiment', type: 'Text' },
-    { name: 'Gestionnaire', type: 'Text' },
-    { name: 'Type_lot', type: 'Text' },
-    { name: 'Perimetre', type: 'Text' },
-    { name: 'Zone_operationnelle', type: 'Text' },
-    { name: 'Statut_locatif', type: 'Text' },
-    { name: 'NOM_TYPE_BAIL', type: 'Text' },
-    { name: 'ACTIF', type: 'Text' },
-    { name: 'BATI', type: 'Text' },
-    { name: 'SiteBatiment', type: 'Text' },
-    { name: 'SiteBatLot', type: 'Text' },
-    { name: 'N_parcelle', type: 'Text' },
-    { name: 'Libelle_batiment', type: 'Text' },
-    { name: 'Libelle_lot', type: 'Text' },
-    { name: 'Bat', type: 'Text' },
-    { name: 'N_Lot', type: 'Text' }
-  ]
+  allowSelectBy: true
 });
 
 // Charger les données quand les enregistrements changent
