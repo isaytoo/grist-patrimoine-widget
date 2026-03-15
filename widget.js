@@ -16,7 +16,7 @@ let selectedActif = new Set();
 let selectedBati = new Set();
 
 // Éléments DOM
-let filterTypeBatiment, filterGestionnaire, filterTypeLotContainer, filterPerimetreContainer;
+let filterTypeBatiment, filterGestionnaire, filterCommune, filterTypeLotContainer, filterPerimetreContainer;
 let filterZone, filterStatutLocatifContainer, filterTypeBailContainer, filterActifContainer, filterBatiContainer;
 let toggleAllTypeLot, toggleAllPerimetre, toggleAllStatutLocatif, toggleAllTypeBail, toggleAllActif, toggleAllBati;
 let btnFilter, btnReset, btnExport, btnExportDetail, tableContainer, resultsCount;
@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Récupérer les éléments DOM
   filterTypeBatiment = document.getElementById('filter-type-batiment');
   filterGestionnaire = document.getElementById('filter-gestionnaire');
+  filterCommune = document.getElementById('filter-commune');
   filterTypeLotContainer = document.getElementById('filter-type-lot');
   filterPerimetreContainer = document.getElementById('filter-perimetre');
   filterZone = document.getElementById('filter-zone');
@@ -108,6 +109,7 @@ btnExportDetail.addEventListener('click', exportToExcelDetail);
 // Filtrage automatique au changement
 filterTypeBatiment.addEventListener('change', applyFilters);
 filterGestionnaire.addEventListener('change', applyFilters);
+filterCommune.addEventListener('change', applyFilters);
 filterZone.addEventListener('change', applyFilters);
 
 // Toggle all buttons
@@ -129,6 +131,7 @@ function populateFilters() {
   const uniqueValues = {
     Type_batiment: new Set(),
     Gestionnaire: new Set(),
+    Commune_site: new Set(),
     Type_lot: new Set(),
     Perimetre: new Set(),
     Zone_operationnelle: new Set(),
@@ -141,6 +144,7 @@ function populateFilters() {
   allData.forEach(row => {
     if (row.Type_batiment) uniqueValues.Type_batiment.add(row.Type_batiment);
     if (row.Gestionnaire) uniqueValues.Gestionnaire.add(row.Gestionnaire);
+    if (row.Commune_site) uniqueValues.Commune_site.add(row.Commune_site);
     if (row.Type_lot) uniqueValues.Type_lot.add(row.Type_lot);
     if (row.Perimetre) uniqueValues.Perimetre.add(row.Perimetre);
     if (row.Zone_operationnelle) uniqueValues.Zone_operationnelle.add(row.Zone_operationnelle);
@@ -152,6 +156,7 @@ function populateFilters() {
   
   populateSelect(filterTypeBatiment, uniqueValues.Type_batiment);
   populateSelect(filterGestionnaire, uniqueValues.Gestionnaire);
+  populateSelect(filterCommune, uniqueValues.Commune_site);
   populateToggleGroup(filterTypeLotContainer, uniqueValues.Type_lot, selectedTypeLot);
   populateToggleGroup(filterPerimetreContainer, uniqueValues.Perimetre, selectedPerimetre);
   populateSelect(filterZone, uniqueValues.Zone_operationnelle);
@@ -219,12 +224,14 @@ function applyFilters() {
   const filters = {
     Type_batiment: filterTypeBatiment.value,
     Gestionnaire: filterGestionnaire.value,
+    Commune_site: filterCommune.value,
     Zone_operationnelle: filterZone.value
   };
   
   filteredData = allData.filter(row => {
     if (filters.Type_batiment && row.Type_batiment !== filters.Type_batiment) return false;
     if (filters.Gestionnaire && row.Gestionnaire !== filters.Gestionnaire) return false;
+    if (filters.Commune_site && row.Commune_site !== filters.Commune_site) return false;
     // Filtres multi-sélection : si aucun sélectionné, tout passe
     if (selectedTypeLot.size > 0 && !selectedTypeLot.has(row.Type_lot)) return false;
     if (selectedPerimetre.size > 0 && !selectedPerimetre.has(row.Perimetre)) return false;
@@ -353,6 +360,7 @@ function escapeHtml(text) {
 function resetFilters() {
   filterTypeBatiment.value = '';
   filterGestionnaire.value = '';
+  filterCommune.value = '';
   filterZone.value = '';
   
   // Réinitialiser les toggles
