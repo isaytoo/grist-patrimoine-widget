@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function setupEventListeners() {
-  // Initialisation Grist
+// Initialisation Grist
 grist.ready({
   requiredAccess: 'read table',
   columns: [
@@ -98,6 +98,31 @@ grist.onRecords(function(records) {
   populateFilters();
   applyFilters();
 });
+
+// Event listeners pour les filtres
+btnFilter.addEventListener('click', applyFilters);
+btnReset.addEventListener('click', resetFilters);
+btnExport.addEventListener('click', exportToExcel);
+btnExportDetail.addEventListener('click', exportToExcelDetail);
+
+// Filtrage automatique au changement
+filterTypeBatiment.addEventListener('change', applyFilters);
+filterGestionnaire.addEventListener('change', applyFilters);
+filterZone.addEventListener('change', applyFilters);
+
+// Toggle all buttons
+toggleAllTypeLot.addEventListener('click', () => toggleSelectAll(filterTypeLotContainer, selectedTypeLot));
+toggleAllPerimetre.addEventListener('click', () => toggleSelectAll(filterPerimetreContainer, selectedPerimetre));
+toggleAllStatutLocatif.addEventListener('click', () => toggleSelectAll(filterStatutLocatifContainer, selectedStatutLocatif));
+toggleAllTypeBail.addEventListener('click', () => toggleSelectAll(filterTypeBailContainer, selectedTypeBail));
+toggleAllActif.addEventListener('click', () => toggleSelectAll(filterActifContainer, selectedActif));
+toggleAllBati.addEventListener('click', () => toggleSelectAll(filterBatiContainer, selectedBati));
+
+} // Fin de setupEventListeners
+
+// =============================================================================
+// FONCTIONS UTILITAIRES ET FILTRES
+// =============================================================================
 
 // Peupler les filtres avec les valeurs uniques
 function populateFilters() {
@@ -507,27 +532,6 @@ function exportToExcelDetail() {
   const date = new Date().toISOString().slice(0, 10);
   XLSX.writeFile(wb, `Export_Patrimoine_Detail_${date}.xlsx`);
 }
-
-// Event listeners
-btnFilter.addEventListener('click', applyFilters);
-btnReset.addEventListener('click', resetFilters);
-btnExport.addEventListener('click', exportToExcel);
-btnExportDetail.addEventListener('click', exportToExcelDetail);
-
-// Filtrage automatique au changement
-filterTypeBatiment.addEventListener('change', applyFilters);
-filterGestionnaire.addEventListener('change', applyFilters);
-filterZone.addEventListener('change', applyFilters);
-
-// Toggle all buttons
-toggleAllTypeLot.addEventListener('click', () => toggleSelectAll(filterTypeLotContainer, selectedTypeLot));
-toggleAllPerimetre.addEventListener('click', () => toggleSelectAll(filterPerimetreContainer, selectedPerimetre));
-toggleAllStatutLocatif.addEventListener('click', () => toggleSelectAll(filterStatutLocatifContainer, selectedStatutLocatif));
-toggleAllTypeBail.addEventListener('click', () => toggleSelectAll(filterTypeBailContainer, selectedTypeBail));
-toggleAllActif.addEventListener('click', () => toggleSelectAll(filterActifContainer, selectedActif));
-toggleAllBati.addEventListener('click', () => toggleSelectAll(filterBatiContainer, selectedBati));
-
-} // Fin de setupEventListeners
 
 // =============================================================================
 // SYSTÈME D'ONGLETS
