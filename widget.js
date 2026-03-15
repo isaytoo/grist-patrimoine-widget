@@ -333,7 +333,7 @@ function renderTable() {
   sites.forEach(site => {
     html += `
       <tr>
-        <td><strong>${escapeHtml(site.Site)}</strong></td>
+        <td><strong><a class="site-link" onclick="navigateToSite('${escapeHtml(site.Site)}')">${escapeHtml(site.Site)}</a></strong></td>
         <td>${escapeHtml(site.Commune)}</td>
         <td>${escapeHtml(site.Libelle)}</td>
         <td>${escapeHtml(site.Adresse)}</td>
@@ -565,6 +565,21 @@ function switchTab(tabId) {
   
   // Activer le bouton sélectionné
   document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+}
+
+// Naviguer vers l'onglet Recherche par site avec un numéro de site
+function navigateToSite(siteNumber) {
+  // Basculer vers l'onglet "Recherche par site"
+  switchTab('site');
+  
+  // Remplir le champ de recherche avec le numéro de site
+  siteSearch.value = siteNumber;
+  
+  // Afficher la fiche du site
+  displaySiteFiche();
+  
+  // Scroll vers le haut pour voir le résultat
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // =============================================================================
