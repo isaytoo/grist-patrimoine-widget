@@ -1253,10 +1253,11 @@ td strong {
                     <div class="accordion-body">
                         <div class="filters-grid">
                             <div class="filter-group">
-                                <label>🏢 Type bâtiment</label>
-                                <select id="filter-type-batiment">
-                                    <option value="">Tous les types</option>
-                                </select>
+                                <div class="toggle-header">
+                                    <label>🏢 Type bâtiment</label>
+                                    <span class="toggle-select-all" id="toggle-all-type-batiment">Tout sélectionner</span>
+                                </div>
+                                <div class="toggle-group" id="filter-type-batiment"></div>
                             </div>
                             
                             <div class="filter-group">
